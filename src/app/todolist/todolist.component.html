@@ -1,0 +1,335 @@
+<!-- navbar -->
+<nav class="navbar navbar-expand-lg navbar navbar-light" style="background-color: #e3f2fd; height: 90px;">
+    <div >
+        <img src="https://to-do-cdn.microsoft.com/static-assets/c87265a87f887380a04cf21925a56539b29364b51ae53e089c3ee2b2180148c6/icons/logo.png" class="logo" width="6%" height="6%" style="margin-bottom: 5px;" />
+        <h1  class="navbar-brand" style="font-size: 40px; color: rgb(139, 139, 216);">Todo List</h1>
+        <button type="button" data-toggle="modal" class="btn btn-outline-success" style="height: 50px; width: 150px; margin-left: 15px;" data-target="#exampleModalCenter">ADD NEW TODO</button>
+
+    </div>
+
+    <button type="button" class="navbar-toggler" data-toggle="collapse" data-target="#navbarCollapse9">
+        <span class="navbar-toggler-icon"></span>
+    </button>
+
+    <div class=" d-inline collapse navbar-collapse" id="navbarCollapse9">
+
+        <p ><span><img src="../../assets/user.png" class="logo"  alt="" style="width: 50px; height: 50px; margin-right: 5px;"></span></p>
+        <p style="margin-right: 10px; color: rgb(136, 136, 200); font-size: 25px;">{{this.name}}</p>
+        <button (click)="logOut()"  type="submit" class="btn btn-outline-primary" style="height: 50px; width: 80px;">LOGOUT</button>
+
+    </div>
+</nav>
+
+<!-- add new todo modal -->
+<div >
+
+    <div class="modal fade" id="exampleModalCenter" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered modal-lg" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                <h5 class="modal-title" id="exampleModalLongTitle" style="font-size: 20px;"><b> Add New Todo</b></h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+                </div>
+                <div class="modal-body">
+                    <div>
+                        <form id="login-form" method="post" role="form" style="display: block;" #addTodoForm="ngForm" (ngSubmit)="addTodoForm.valid && saveTodo(addTodoForm)">
+
+                            <div class="form-group">
+                                <label for=""><b>Title </b> <small> (Title should be shorter than 25 characters)</small> </label>
+                                <input type="text" #title="ngModel"  [(ngModel)]="todoService.selectedTodo.title" name="title" tabindex="1" class="form-control"
+                                required maxlength="25" placeholder="Enter Title" value="">
+                            </div>
+                            <div *ngIf="addTodoForm.submitted && title.errors">
+                                <label *ngIf="title.errors.required" class="validation-message"><p style="color: red;">This field is required.</p> </label>
+                                <label *ngIf="title.errors.maxlength" class="validation-message"><p style="color: red;">Title should be shorter than 25 characters</p> </label>
+                            </div>
+                            <div class="form-group">
+                                <label for=""><b>Description </b> <small> (Description should be shorter than 75 characters)</small> </label>
+                                <textarea class="form-control" #description="ngModel" [(ngModel)]="todoService.selectedTodo.description"  name="description"  rows="3" placeholder="Enter description" maxlength="75" ></textarea>
+                            </div>
+                            <div class="form-group">
+                                <label for=""><b>Due Date </b></label>
+                                <input type="date" #duedate="ngModel"  [(ngModel)]="todoService.selectedTodo.duedate" name="duedate" tabindex="1" class="form-control"
+                                required placeholder="Select date" value="">
+                            </div>
+                            <div *ngIf="addTodoForm.submitted && duedate.errors">
+                                <label *ngIf="duedate.errors.required" class="validation-message"><p style="color: red;">This field is required.</p> </label>
+                            </div>
+                            <!-- <div *ngIf="addTodoForm.submitted && '2021-06-05' > this.current_date ">
+                                <label class="validation-message"><p style="color: red;">Due date should be greater than current date & time.</p> </label>
+                            </div> -->
+                            <div class="form-group">
+
+                                <input type="text" #status="ngModel"  [(ngModel)]="todoService.selectedTodo.status" name="status" tabindex="1" class="form-control" hidden >
+                            </div>
+
+                            <div class="form-group" >
+                                <label for=""><b>Category </b></label>
+                                <select  type="text" #category="ngModel"  [(ngModel)]="todoService.selectedTodo.category" name="category" tabindex="1" class="form-control"
+                                required  placeholder="Enter Title" value="" >
+                                    <option *ngFor="let cat of this.categories">{{cat.category}}</option>
+                                </select>
+                            </div>
+                            <div *ngIf="addTodoForm.submitted && category.errors">
+                                <label *ngIf="category.errors.required" class="validation-message"><p style="color: red;">This field is required.</p> </label>
+                            </div>
+
+                            <div class="form-group">
+
+                                <input type="text" #user_id="ngModel"  [(ngModel)]="todoService.selectedTodo.user_id" name="user_id" tabindex="1" class="form-control" hidden>
+                            </div>
+
+                            <div class="form-group">
+                                <div class="modal-footer">
+
+                                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                                    <button type="submit" class="btn btn-primary" >Save</button>
+                                </div>
+                            </div>
+
+                        </form>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- todo table-->
+<div style="margin-top: 20px; margin-left: 20px; margin-right: 20px;">
+
+
+
+    <mat-card>
+
+
+
+        <div *ngIf="this.todos == '' " >
+            <p style="color: rgb(125, 125, 206); font-size: 20px;">There are no ToDos...</p>
+        </div>
+        <div *ngIf="this.todos != '' " >
+
+            <!--Search Fields-->
+            <div>
+                <div>
+                    <form  class="form-inline" method="post" role="form" style="display: block;" #searchByTitleForm="ngForm" (ngSubmit)="searchByTitleForm.valid && serachByTitle(searchByTitleForm)">
+
+                        <div class="form-group" class="col-sm-4">
+                            <div class="form-group">
+                                <label for=""><b>Search By Title : </b></label>
+                                <input style="margin-left: 5px;" type="text" #title="ngModel"  [(ngModel)]="todoService.selectedTitle.title" name="title" tabindex="1" class="form-control"
+                                 placeholder="type title..." value="">
+                                 <button type="submit" class="btn btn-primary" style="margin-left: 5px;">Search</button>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+                <div style="margin-top: 5px;">
+                    <form  class="form-inline" method="post" role="form" style="display: block;" #searchByStatusForm="ngForm" (ngSubmit)="searchByStatusForm.valid && serachByStatus(searchByStatusForm)">
+
+                        <div class="form-group" class="col-sm-4">
+                            <div class="form-group">
+                                <label for=""><b>Search By Status : </b></label>
+                                <select style="width: 180px;"  type="text" #status="ngModel"  [(ngModel)]="todoService.selectedStatus.status" name="status" tabindex="1" class="form-control"
+                                  placeholder="Select status" value="">
+                                    <option *ngFor="let st of this.statuses" >{{st.status}}</option>
+                                </select>
+                                 <button type="submit" class="btn btn-primary" style="margin-left: 5px;">Search</button>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+                <div style="margin-top: 5px;">
+                    <form  class="form-inline" method="post" role="form" style="display: block;" #searchByCategoryForm="ngForm" (ngSubmit)="searchByCategoryForm.valid && serachByCategory(searchByCategoryForm)">
+
+                        <div class="form-group" class="col-sm-4">
+                            <div class="form-group">
+                                <label for=""><b>Search By Category : </b></label>
+                                <select style="width: 165px;"  type="text" #category="ngModel"  [(ngModel)]="todoService.selectedCategory.category" name="category" tabindex="1" class="form-control"
+                                  placeholder="Select status" value="">
+                                    <option *ngFor="let st of this.categories" >{{st.category}}</option>
+                                </select>
+                                 <button type="submit" class="btn btn-primary" style="margin-left: 5px;">Search</button>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+                <div style="margin-top: 5px;">
+                    <form  class="form-inline" method="post" role="form" style="display: block;" #searchByDateForm="ngForm" (ngSubmit)="searchByDateForm.valid && serachByDueDate(searchByDateForm)">
+
+                        <div class="form-group" class="col-sm-4">
+                            <div class="form-group">
+                                <label for=""><b>Search By Due Date : </b></label>
+                                    <input style="width: 165px;" type="date" #duedate="ngModel"  [(ngModel)]="todoService.selectedDate.duedate" name="duedate" tabindex="1" class="form-control"
+                                     placeholder="Select date" value="">
+
+                                 <button type="submit" class="btn btn-primary" style="margin-left: 5px;">Search</button>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+
+
+            <br>
+            <table class="table">
+                <thead class="thead-light">
+                  <tr>
+                    <th scope="col" hidden>id</th>
+                    <th scope="col" >Title</th>
+                    <th scope="col">Description</th>
+                    <th scope="col">Due Date</th>
+                    <th scope="col">Status</th>
+                    <th scope="col">Category</th>
+                    <th scope="col">Functions</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr *ngFor="let todo of this.todoArray " style="padding-top: 5px;">
+                    <td #id hidden>{{todo.id | number}}</td>
+                    <td>{{todo.title}}</td>
+                    <td>{{todo.description}}</td>
+                    <td (click)="getTodoId(id)" data-toggle="modal" data-target="#changeDueDate"><button type="button" class="btn btn-light" [disabled]="todo.status == 'Completed' || todo.status == 'Cancelled' ">{{todo.duedate}}</button></td>
+                    <td (click)="getTodoId(id)" data-toggle="modal" data-target="#changeStatus"><button type="button" class="btn btn-light" [disabled]="todo.status == 'Completed' || todo.status == 'Cancelled' ">{{todo.status}}</button></td>
+                    <td>{{todo.category}}</td>
+                    <td>
+                        <div>
+                            <button  (click)="getTodoId(id)"  data-toggle="modal" data-target="#deleteConfirmation" type="button" class="btn btn-outline-danger" >Delete</button>
+                            <button  (click)="completeTodo(id, 'Completed')" type="button" class="btn btn-outline-primary" style="margin-left: 5px;" [disabled]="todo.status == 'Completed' || todo.status == 'Cancelled' ">Complete</button>
+                        </div>
+
+                    </td>
+                  </tr>
+
+                </tbody>
+              </table>
+              <div class="d-flex justify-content-between p-2">
+
+                <ngb-pagination [collectionSize]="this.collectionSize" [(page)]="page" [pageSize]="pageSize" (pageChange)="refreshTodoTable()">
+                </ngb-pagination>
+
+                <select class="custom-select" style="width: auto" [(ngModel)]="pageSize" (ngModelChange)="refreshTodoTable()">
+                  <option [ngValue]="2">2 items per page</option>
+                  <option [ngValue]="4">4 items per page</option>
+                  <option [ngValue]="6">6 items per page</option>
+                </select>
+              </div>
+        </div>
+
+
+    </mat-card>
+
+</div>
+
+<!-- change staus modal -->
+<div >
+    <div class="modal fade" id="changeStatus" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered modal-lg" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                <h5 class="modal-title" id="exampleModalLongTitle" style="font-size: 20px;"><b> Change Staus </b></h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+                </div>
+                <div class="modal-body">
+                    <div>
+                        <form id="login-form" method="post" role="form" style="display: block;" #changeStatusForm="ngForm" (ngSubmit)="changeStatusForm.valid && changeStatus(changeStatusForm)">
+
+                            <div class="form-group" >
+                                <label for=""><b>Status </b></label>
+                                <select  type="text" #status="ngModel"  [(ngModel)]="todoService.selectedStatus.status" name="status" tabindex="1" class="form-control"
+                                 required placeholder="Enter Title" value="">
+                                    <option *ngFor="let st of this.statuses" ><div *ngIf="st.status != 'Completed'">{{st.status}}</div></option>
+                                </select>
+                            </div>
+                            <div *ngIf="changeStatusForm.submitted && status.errors">
+                                <label *ngIf="status.errors.required" class="validation-message"><p style="color: red;">This field is required.</p> </label>
+                            </div>
+                            <div class="form-group">
+                                <div class="modal-footer">
+
+                                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                                    <button type="submit" class="btn btn-primary" >Save</button>
+                                </div>
+                            </div>
+
+                        </form>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<!-- change duedate modal -->
+<div >
+    <div class="modal fade" id="changeDueDate" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered modal-lg" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                <h5 class="modal-title" id="exampleModalLongTitle" style="font-size: 20px;"><b> Change Due Date </b></h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+                </div>
+                <div class="modal-body">
+                    <div>
+                        <form id="login-form" method="post" role="form" style="display: block;" #changeDateForm="ngForm" (ngSubmit)="changeDateForm.valid && changeDueDate(changeDateForm)">
+
+                            <div class="form-group">
+                                <label for=""><b>Due Date </b></label>
+                                <input type="date" #duedate="ngModel"  [(ngModel)]="todoService.selectedDate.duedate" name="duedate" tabindex="1" class="form-control" required [ngClass]="{'invalid-textbox' :changeDateForm.submitted && '2021-06-05' > this.current_date }">
+                            </div>
+                            <!-- <div *ngIf="changeDateForm.submitted && duedate.errors">
+                                <label *ngIf="duedate.errors.required" class="validation-message"><p style="color: red;">This field is required.</p> </label>
+                            </div>
+                            <div *ngIf="changeDateForm.submitted && '2021-06-05' > this.current_date ">
+                                <label class="validation-message"><p style="color: red;">Due date should be greater than current date & time.</p> </label>
+                            </div> -->
+                            <div class="form-group">
+                                <div class="modal-footer">
+
+                                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                                    <button type="submit" class="btn btn-primary" >Save</button>
+                                </div>
+                            </div>
+
+                        </form>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </div>
+</div>
+
+
+
+<!-- Delete Confirmation Modal -->
+<div class="modal fade" id="deleteConfirmation" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered" role="document">
+    <div class="modal-content">
+        <div class="modal-header">
+            <div>
+                <h1 class="modal-title" id="exampleModalLongTitle" >Are you sure?</h1>
+            </div>
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                <span aria-hidden="true">&times;</span>
+            </button>
+        </div>
+        <div class="modal-body">
+            <p>Do you really want to delete this ToDo item? This process cannot be undone.</p>
+        </div>
+        <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-dismiss="modal" style="width:80px; margin-right: 10px;" >No</button>
+        <button type="button"  (click)="deleteTodo()" data-dismiss="modal" style="width:80px; margin-right: 10px;" class="btn btn-primary">Yes</button>
+        </div>
+    </div>
+    </div>
+</div>

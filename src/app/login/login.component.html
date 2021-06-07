@@ -1,0 +1,101 @@
+
+
+<div class="container" style="padding-left: 15%; padding-top: 10%; padding-bottom: 10%;" >
+
+    <div class="col-sm-6 " >
+
+        <div class="col-md-6 col-md-offset-3">
+
+            <div class="panel panel-login">
+                <div class="panel-heading">
+                    <div class="row">
+                        <div class="col-xs-6"  style="margin-top: 10px;">
+                            <a href="#" class="active" id="login-form-link">Login</a>
+                        </div>
+                        <div class="col-xs-6" style="margin-top: 10px;">
+                            <a href="#" id="register-form-link">Register</a>
+                        </div>
+                    </div>
+                    <hr>
+                </div>
+                <div class="panel-body" style="margin-left: 10%; margin-right: 10%; margin-top: 5%;">
+                    <div class="row">
+                        <div class="col-lg-12">
+                            <form id="login-form" method="post" role="form" style="display: block;" #signInForm="ngForm" (ngSubmit)="signInForm.valid && login(signInForm)">
+
+                                <div class="form-group">
+                                    <label for=""><b>Email</b></label>
+                                    <input type="text" #email="ngModel" [(ngModel)]="loginService.selectedUser.email" name="email" placeholder="Email"
+                                    required [pattern]="emailRegex"  [ngClass]="{'invalid-textbox' :signInForm.submitted && !email.valid }" class="form-control" value="">
+                                </div>
+                                <div *ngIf="signInForm.submitted && email.errors">
+                                    <label *ngIf="email.errors.required" class="validation-message"><p style="color: red;"> Enter your email adress</p></label>
+                                    <label *ngIf="email.errors.pattern" class="validation-message"><p style="color: red;">Invalid email address</p> </label>
+                                </div>
+                                <div class="form-group">
+                                    <label for=""><b>Password</b></label>
+                                    <input type="password" #password="ngModel" [(ngModel)]="loginService.selectedUser.password" name="password" placeholder="Password"
+                                    minlength="8" required [ngClass]="{'invalid-textbox' :signInForm.submitted && !password.valid }" class="form-control" >
+                                </div>
+                                <div *ngIf="signInForm.submitted && password.errors">
+                                    <label *ngIf="password.errors.required" class="validation-message"><p style="color: red;">Enter your password</p> </label>
+                                    <label *ngIf="password.errors.minlength" class="validation-message"><p style="color: red;">Enter atleast 8 characters</p> </label>
+                                </div>
+
+                                <div class="form-group">
+                                    <div class="row">
+                                        <div class="col-sm-6 col-sm-offset-3">
+                                            <input type="submit" name="login-submit" id="login-submit" tabindex="4" class="form-control btn btn-login" value="Log In">
+                                        </div>
+                                    </div>
+                                </div>
+
+                            </form>
+                            <form id="register-form" style="display: none;" #signUpForm="ngForm" (ngSubmit)="signUpForm.valid && onSubmit(signUpForm)">
+                                <div class="form-group">
+                                    <label for=""><b>Name</b> </label>
+                                    <input type="text" #name="ngModel"  [(ngModel)]="loginService.selectedUser.name" name="name" tabindex="1" class="form-control"
+                                    required placeholder="Enter your name" value="">
+                                </div>
+                                <div *ngIf="signUpForm.submitted && name.errors">
+                                    <label *ngIf="name.errors.required" class="validation-message"><p style="color: red;">This field is required.</p> </label>
+                                </div>
+                                <div class="form-group">
+                                    <label for=""><b>Email</b> </label>
+                                    <input type="text" #email="ngModel" [(ngModel)]="loginService.selectedUser.email" name="email" placeholder="Enter your email"
+                                    required [pattern]="emailRegex"  [ngClass]="{'invalid-textbox' :signUpForm.submitted && !email.valid }" class="form-control" value="">
+                                </div>
+                                <div *ngIf="signUpForm.submitted && email.errors">
+                                    <label *ngIf="email.errors.required" class="validation-message"><p style="color: red;">This field is required.</p> </label>
+                                    <label *ngIf="email.errors.pattern" class="validation-message"><p style="color: red;">Invalid email address.</p> </label>
+                                </div>
+
+                                <div class="form-group">
+                                    <label for=""><b>Password</b> </label>
+                                    <input type="password" #password="ngModel" [(ngModel)]="loginService.selectedUser.password" name="password" placeholder="Enter your password"
+                                    minlength="8" required [ngClass]="{'invalid-textbox' :signUpForm.submitted && !password.valid }" class="form-control" >
+                                </div>
+                                <div *ngIf="signUpForm.submitted && password.errors">
+                                    <label *ngIf="password.errors.required" class="validation-message"><p style="color: red;">This field is required.</p> </label>
+                                    <label *ngIf="password.errors.minlength" class="validation-message"><p style="color: red;">Enter atleast 8 characters.</p> </label>
+                                </div>
+
+                                <div class="form-group">
+                                    <div class="row">
+                                        <div class="col-sm-6 col-sm-offset-3">
+                                            <input type="submit" name="register-submit" id="register-submit" tabindex="4" class="form-control btn btn-register" value="Register Now">
+                                        </div>
+                                    </div>
+                                </div>
+                            </form>
+
+
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+</div>
